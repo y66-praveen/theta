@@ -15,6 +15,13 @@
 // ===========================================================================
 (function () {
   "use strict";
+  // Dynamic hydration: map NEET quickWin and highValueHighEffort flags from valueVsEffort metadata
+  if (typeof NEET_CHAPTERS !== "undefined") {
+    NEET_CHAPTERS.forEach(c => {
+      c.quickWin = (c.valueVsEffort === "Quick Win");
+      c.highValueHighEffort = (c.valueVsEffort === "High Value, High Effort");
+    });
+  }
 
   const pageArea = document.getElementById("pageArea");
 
@@ -362,7 +369,6 @@
       ${heroGlyph(exam, "priority")}
       <p class="eyebrow">Priority explorer</p>
       <h1>All ${exam.chapters.length} chapters, ranked</h1>
-      <p class="lede">Filter by subject and tier, then sort by whichever number matters for your situation right now.</p>
     </section>
     ${controlsPanel(exam, params, `/${examKey}/priority`, null)}
     <p class="result-count">${results.length} chapter${results.length === 1 ? "" : "s"}</p>
@@ -495,7 +501,7 @@
     by an explicit, documented formula rather than gut feel.</p>
 
     <div class="detail-section">
-      <h2>How to use this page, top to bottom</h2>
+      <h2>How to find your way around</h2>
       <p>Start on <a href="/${examKey}/" data-link>Home</a> for the highest-priority ${exam.label} chapters and the
       quickest wins if your time is limited. Open <a href="/${examKey}/priority" data-link>Priority explorer</a> to
       browse every chapter, filter by subject or tier, and sort by Focus Score, Return on Time or Average Weightage.
@@ -692,7 +698,8 @@
       a.setAttribute("href", hrefFor(key, a.getAttribute("data-nav")));
     });
 
-    document.querySelectorAll("[data-link]").forEach((a) => {
+    // Only toggle active state for header navigation and mobile drawer menu links
+    document.querySelectorAll(".site-header a[data-link], .mobile-nav-panel a[data-link]").forEach((a) => {
       const href = a.getAttribute("href");
       a.classList.toggle("active", !!href && href !== "#" && (href === path || (href.length > 1 && path.startsWith(href))));
     });
